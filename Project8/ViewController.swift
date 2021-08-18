@@ -42,6 +42,17 @@ class ViewController: UIViewController {
         answersLabel.textAlignment = .right
         view.addSubview(answersLabel)
         
+         currentAnswer = UITextField()
+        currentAnswer.translatesAutoresizingMaskIntoConstraints = false
+        currentAnswer.placeholder = "Tap letters to guess"
+        currentAnswer.font = UIFont.systemFont(ofSize: 44)
+        currentAnswer.isUserInteractionEnabled = false
+        view.addSubview(currentAnswer)
+        
+        
+        
+        
+        
         NSLayoutConstraint.activate([
             //Notice the way I’m pinning the label to view.layoutMarginsGuide – that will make the score label have a little distance from the top + right edge of the screen by view.layoutMarginsGuide
             //if i used view.topAnchor no little space would be added
@@ -61,7 +72,7 @@ class ViewController: UIViewController {
             // also pin the top of the answers label to the bottom of the score label
             answersLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
 
-            // make the answers label stick to the trailing edge of our layout margins, minus 100 to pull it from the right edge
+            // make the answers label stick to the trailing edge of our layout margins, minus 100
             answersLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -100),
 
             // make the answers label take up 40% of the available space, minus 100
@@ -69,6 +80,10 @@ class ViewController: UIViewController {
 
             // make the answers label match the height of the clues label
             answersLabel.heightAnchor.constraint(equalTo: cluesLabel.heightAnchor),
+            
+            currentAnswer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            currentAnswer.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
+            currentAnswer.topAnchor.constraint(equalTo: cluesLabel.bottomAnchor, constant: 20)
             
         ])
         
