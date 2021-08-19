@@ -78,13 +78,14 @@ class ViewController: UIViewController {
         view.addSubview(clear)
         
         //a plain UIView – it host our buttons
-        let buttonView = UIView()
-        buttonView.translatesAutoresizingMaskIntoConstraints = false
-        buttonView.backgroundColor = .green
-        view.addSubview(buttonView)
+        let buttonsView = UIView()
+        buttonsView.translatesAutoresizingMaskIntoConstraints = false
+        buttonsView.backgroundColor = .green
+        view.addSubview(buttonsView)
         
         
-        
+        // it takes the multiplier into account first, then the constant.
+    
         NSLayoutConstraint.activate([
             //Notice the way I’m pinning the label to view.layoutMarginsGuide – that will make the score label have a little distance from the top + right edge of the screen by view.layoutMarginsGuide
             //if i used view.topAnchor no little space would be added
@@ -128,26 +129,55 @@ class ViewController: UIViewController {
             clear.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
             clear.heightAnchor.constraint(equalToConstant: 44),
             
-            buttonView.widthAnchor.constraint(equalToConstant: 750),
-            buttonView.heightAnchor.constraint(equalToConstant: 320),
-            buttonView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            buttonView.topAnchor.constraint(equalTo: submit.bottomAnchor, constant: 20),
-            buttonView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20)
+            buttonsView.widthAnchor.constraint(equalToConstant: 750),
+            buttonsView.heightAnchor.constraint(equalToConstant: 320),
+            buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonsView.topAnchor.constraint(equalTo: submit.bottomAnchor, constant: 20),
+            buttonsView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20)
             
             
         ])
         
-        cluesLabel.backgroundColor = .red
-        answersLabel.backgroundColor = .blue
-        // it takes the multiplier into account first, then the constant.
+        
+        
+        
+        // set some values for the width and height of each button
+        let width = 150
+        let height = 80
+
+        // create 20 buttons as a 4x5 grid
+        for row in 0..<4 {
+            for col in 0..<5 {
+                // create a new button and give it a big font size
+                let letterButton = UIButton(type: .system)
+                letterButton.titleLabel?.font = UIFont.systemFont(ofSize: 36)
+
+                // give the button some temporary text so we can see it on-screen
+                letterButton.setTitle("WWW", for: .normal)
+
+                // calculate the frame of this button using its column and row
+                let frame = CGRect(x: col * width, y: row * height, width: width, height: height)
+                letterButton.frame = frame
+
+                // add it to the buttons view
+                buttonsView.addSubview(letterButton)
+
+                // and also to our letterButtons array
+                letterButtons.append(letterButton)
+            }
+        }
+        
+        
+        
+        
         
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
     }
-    
     
 }
 
