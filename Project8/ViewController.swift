@@ -7,6 +7,13 @@
 
 import UIKit
 //anchors: let us very clearly and descriptively place views relative to each other
+// intrinsic content size – how big each view needs to be to show its content.
+
+//Every view in all our UIKit layouts has two important properties that tell UIKit how it can squash or stretch them in order to satisfy constraints:
+
+//Content hugging priority determines how likely this view is to be made larger than its intrinsic content size. If this priority is high it means Auto Layout prefers not to stretch it; if it’s low, it will be more likely to be stretched.
+//Content compression resistance priority determines how happy we are for this view to be made smaller than its intrinsic content size.
+
 
 class ViewController: UIViewController {
     var cluesLabel: UILabel!
@@ -44,10 +51,16 @@ class ViewController: UIViewController {
         answersLabel.textAlignment = .right
         view.addSubview(answersLabel)
         
+        //Giving them top priority to be stretched
+        cluesLabel.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
+        answersLabel.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
+        
+        
         //create current answer text field
         currentAnswer = UITextField()
         currentAnswer.translatesAutoresizingMaskIntoConstraints = false
         currentAnswer.placeholder = "Tap letters to guess"
+        currentAnswer.textAlignment = .center
         currentAnswer.font = UIFont.systemFont(ofSize: 44)
         currentAnswer.isUserInteractionEnabled = false
         view.addSubview(currentAnswer)
@@ -63,6 +76,13 @@ class ViewController: UIViewController {
         clear.translatesAutoresizingMaskIntoConstraints = false
         clear.setTitle("CLEAR", for: .normal)
         view.addSubview(clear)
+        
+        //a plain UIView – it host our buttons
+        let buttonView = UIView()
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        buttonView.backgroundColor = .green
+        view.addSubview(buttonView)
+        
         
         
         NSLayoutConstraint.activate([
@@ -106,7 +126,13 @@ class ViewController: UIViewController {
             
             //To stop them overlapping, we’ll subtract 100 from the submit button’s X position, and add 100 to the clear button’s X position
             clear.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
-            clear.heightAnchor.constraint(equalToConstant: 44)
+            clear.heightAnchor.constraint(equalToConstant: 44),
+            
+            buttonView.widthAnchor.constraint(equalToConstant: 750),
+            buttonView.heightAnchor.constraint(equalToConstant: 320),
+            buttonView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonView.topAnchor.constraint(equalTo: submit.bottomAnchor, constant: 20),
+            buttonView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20)
             
             
         ])
