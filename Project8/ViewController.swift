@@ -18,13 +18,14 @@ class ViewController: UIViewController {
     override func loadView() {
         view = UIView()
         view.backgroundColor = .white
-        
+        //create score label
         scoreLabel = UILabel()
         scoreLabel.translatesAutoresizingMaskIntoConstraints = false
         scoreLabel.textAlignment = .right
         scoreLabel.text = "Score: 0"
         view.addSubview(scoreLabel)
         
+        //create clues label
         cluesLabel = UILabel()
         cluesLabel.translatesAutoresizingMaskIntoConstraints = false
         cluesLabel.font = UIFont.systemFont(ofSize: 24)
@@ -34,6 +35,7 @@ class ViewController: UIViewController {
         cluesLabel.numberOfLines = 0
         view.addSubview(cluesLabel)
         
+        //create answers label
         answersLabel = UILabel()
         answersLabel.translatesAutoresizingMaskIntoConstraints = false
         answersLabel.font = UIFont.systemFont(ofSize: 24)//give us 24-point font in whatever font is currently being used by iOS.
@@ -42,15 +44,25 @@ class ViewController: UIViewController {
         answersLabel.textAlignment = .right
         view.addSubview(answersLabel)
         
-         currentAnswer = UITextField()
+        //create current answer text field
+        currentAnswer = UITextField()
         currentAnswer.translatesAutoresizingMaskIntoConstraints = false
         currentAnswer.placeholder = "Tap letters to guess"
         currentAnswer.font = UIFont.systemFont(ofSize: 44)
         currentAnswer.isUserInteractionEnabled = false
         view.addSubview(currentAnswer)
         
+        //create submit button
+        let submit = UIButton(type: .system)
+        submit.setTitle("SUBMIT", for: .normal)
+        submit.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(submit)
         
         
+        let clear = UIButton(type: .system)
+        clear.translatesAutoresizingMaskIntoConstraints = false
+        clear.setTitle("CLEAR", for: .normal)
+        view.addSubview(clear)
         
         
         NSLayoutConstraint.activate([
@@ -83,7 +95,19 @@ class ViewController: UIViewController {
             
             currentAnswer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             currentAnswer.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            currentAnswer.topAnchor.constraint(equalTo: cluesLabel.bottomAnchor, constant: 20)
+            currentAnswer.topAnchor.constraint(equalTo: cluesLabel.bottomAnchor, constant: 20),
+            
+            submit.topAnchor.constraint(equalTo: currentAnswer.bottomAnchor),
+            submit.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -100),
+            submit.heightAnchor.constraint(equalToConstant: 44),
+            
+            //for  clear button we’ll be setting its Y anchor so that its stays aligned with the Y position of the submit button...Both buttons will remain aligned even if we move one
+            clear.centerYAnchor.constraint(equalTo: submit.centerYAnchor),
+            
+            //To stop them overlapping, we’ll subtract 100 from the submit button’s X position, and add 100 to the clear button’s X position
+            clear.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
+            clear.heightAnchor.constraint(equalToConstant: 44)
+            
             
         ])
         
