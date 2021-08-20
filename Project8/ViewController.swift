@@ -238,6 +238,16 @@ class ViewController: UIViewController {
             score += 1
             
         }
+        else {
+            let ac = UIAlertController(title: "Incorrect", message: "Incorrect guess,try again", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Continue", style: .default))
+            present(ac,animated: true)
+            
+            if(score > 0){
+                score -= 1
+            }
+          
+        }
         if score % 7 == 0 {
             let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
             ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
