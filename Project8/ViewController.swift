@@ -24,7 +24,12 @@ class ViewController: UIViewController {
     
     var activatedButtons = [UIButton]()
     var solutions = [String]()
-    var score = 0
+    var score = 0 {
+        didSet{//whenever score value changes scoreLabel gets updated
+            scoreLabel.text = "Score: \(score)"
+        }
+      
+    }
     var level = 1
     
     override func loadView() {
@@ -87,12 +92,12 @@ class ViewController: UIViewController {
         //a plain UIView – it host our buttons
         let buttonsView = UIView()
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
-        buttonsView.backgroundColor = .green
+     
         view.addSubview(buttonsView)
         
         
         // it takes the multiplier into account first, then the constant.
-    
+        
         NSLayoutConstraint.activate([
             //Notice the way I’m pinning the label to view.layoutMarginsGuide – that will make the score label have a little distance from the top + right edge of the screen by view.layoutMarginsGuide
             //if i used view.topAnchor no little space would be added
@@ -102,22 +107,22 @@ class ViewController: UIViewController {
             
             // pin the top of the clues label to the bottom of the score label
             cluesLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
-
+            
             // pin the leading edge of the clues label to the leading edge of our layout margins, adding 100 for some space
             cluesLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 100),
-
+            
             // make the clues label 60% of the width of our layout margins, minus 100
             cluesLabel.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.6, constant: -100),
-
+            
             // also pin the top of the answers label to the bottom of the score label
             answersLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
-
+            
             // make the answers label stick to the trailing edge of our layout margins, minus 100
             answersLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -100),
-
+            
             // make the answers label take up 40% of the available space, minus 100
             answersLabel.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.4, constant: -100),
-
+            
             // make the answers label match the height of the clues label
             answersLabel.heightAnchor.constraint(equalTo: cluesLabel.heightAnchor),
             
@@ -151,24 +156,24 @@ class ViewController: UIViewController {
         // set some values for the width and height of each button
         let width = 150
         let height = 80
-
+        
         // create 20 buttons as a 4x5 grid
         for row in 0..<4 {
             for col in 0..<5 {
                 // create a new button and give it a big font size
                 let letterButton = UIButton(type: .system)
                 letterButton.titleLabel?.font = UIFont.systemFont(ofSize: 36)
-
+                
                 // give the button some temporary text so we can see it on-screen
                 letterButton.setTitle("WWW", for: .normal)
                 letterButton.addTarget(self, action: #selector(letterTapped), for: .touchUpInside)
                 // calculate the frame of this button using its column and row
                 let frame = CGRect(x: col * width, y: row * height, width: width, height: height)
                 letterButton.frame = frame
-
+                
                 // add it to the buttons view
                 buttonsView.addSubview(letterButton)
-
+                
                 // and also to our letterButtons array
                 letterButtons.append(letterButton)
             }
@@ -187,6 +192,25 @@ class ViewController: UIViewController {
         
     }
     
+    func levelUp(action: UIAlertAction){
+        //1. add 1 level
+        level += 1
+        //2. remove all items in solutions
+        solutions.removeAll(keepingCapacity: true)
+        //3.loading new level
+        loadLevel()
+        
+        //4.making all buttons visible again
+        
+        for btn in letterButtons {
+            btn.isHidden = false
+        }
+        
+        
+       
+        
+    }
+    
     @objc func letterTapped(_ sender: UIButton){
         if let buttonTitle = sender.titleLabel?.text{
             //currentAnswer.text?.append(buttonTitle)
@@ -201,7 +225,22 @@ class ViewController: UIViewController {
     }
     
     @objc func submitTapped(_ sender: UIButton){
+        guard let answer = currentAnswer.text else { return }
         
+        if let solutionIndex = solutions.firstIndex(of: answer){
+            activatedButtons.removeAll()
+            var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
+            splitAnswers?[solutionIndex] = answer
+            answersLabel.text = splitAnswers?.joined(separator: "\n")
+            currentAnswer.text = ""
+            score += 1
+            
+        }
+        if score % 7 == 0 {
+            let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
+            present(ac, animated: true)
+        }
     }
     
     @objc func clearTapped(_ sender: UIButton){
@@ -217,8 +256,8 @@ class ViewController: UIViewController {
         var clueString = ""
         var solutionString = ""
         var letterBits = [String]()
-        
-        if let levelFileURL = Bundle.main.url(forResource: "level1", withExtension: "txt"){
+        let fileLevel = "level\(level)"
+        if let levelFileURL = Bundle.main.url(forResource: fileLevel, withExtension: "txt"){
             if let levelContents = try? String(contentsOf: levelFileURL){
                 var lines = levelContents.components(separatedBy: "\n")
                 lines.shuffle()
@@ -230,7 +269,7 @@ class ViewController: UIViewController {
                     let clue = parts[1]
                     
                     clueString += "\(index + 1). \(clue)\n"
-                   
+                    
                     let solutionWord = answer.replacingOccurrences(of: "|", with: "")
                     solutionString += "\(solutionWord.count) letters\n"
                     solutions.append(solutionWord)
@@ -238,10 +277,10 @@ class ViewController: UIViewController {
                     let bits = answer.components(separatedBy: "|")
                     print(bits)
                     letterBits += bits
-                  
+                    
                     
                 }
-
+                
                 
             }
             
