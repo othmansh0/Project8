@@ -188,6 +188,15 @@ class ViewController: UIViewController {
     }
     
     @objc func letterTapped(_ sender: UIButton){
+        if let buttonTitle = sender.titleLabel?.text{
+            //currentAnswer.text?.append(buttonTitle)
+            currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
+            activatedButtons.append(sender)
+            sender.isHidden = true
+            
+        }
+        
+        
         
     }
     
@@ -196,7 +205,11 @@ class ViewController: UIViewController {
     }
     
     @objc func clearTapped(_ sender: UIButton){
-        
+        currentAnswer.text = ""
+        for button in activatedButtons {
+            button.isHidden = false
+        }
+        activatedButtons.removeAll()
         
     }
     
