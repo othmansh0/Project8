@@ -28,7 +28,6 @@ class ViewController: UIViewController {
         didSet{//whenever score value changes scoreLabel gets updated
             scoreLabel.text = "Score: \(score)"
         }
-      
     }
     var level = 1
     
@@ -190,7 +189,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadLevel()
+        performSelector(inBackground: #selector(loadLevel), with: nil)
+        
         
     }
     
@@ -264,16 +264,16 @@ class ViewController: UIViewController {
         
     }
     
-    func loadLevel(){
+    @objc func loadLevel(){
         var clueString = ""
         var solutionString = ""
         var letterBits = [String]()
         let fileLevel = "level\(level)"
+        
         if let levelFileURL = Bundle.main.url(forResource: fileLevel, withExtension: "txt"){
             if let levelContents = try? String(contentsOf: levelFileURL){
                 var lines = levelContents.components(separatedBy: "\n")
                 lines.shuffle()
-                
                 
                 for (index,line) in lines.enumerated(){
                     let parts = line.components(separatedBy: ": ")
@@ -289,29 +289,25 @@ class ViewController: UIViewController {
                     let bits = answer.components(separatedBy: "|")
                     print(bits)
                     letterBits += bits
-                    
-                    
                 }
-                
-                
             }
-            
-            
-            
-            
-            
         }
         //configure labels and buttons
-        cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
-        answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        letterBits.shuffle()
-        
-        if letterButtons.count == letterBits.count{
-            for i in 0..<letterButtons.count{
-                letterButtons[i].setTitle(letterBits[i], for: .normal)
+        DispatchQueue.main.async {
+            [weak self] in
+            self?.cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
+            self?.answersLabel.text = solutionString.trimmingCharacters(in: .whitespacesAndNewlines)
+            letterBits.shuffle()
+            
+            if self?.letterButtons.count == letterBits.count{
+                for i in 0..<(self?.letterButtons.count)! {
+                    self?.letterButtons[i].setTitle(letterBits[i], for: .normal)
+                }
             }
+            
         }
+        
+        
         
     }
     
